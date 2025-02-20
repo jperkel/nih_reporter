@@ -1,8 +1,8 @@
 library(tidyverse)
-library(lubridate)
 
-datafile <- 'tmp/nih_data-20250219.csv'
-datafile2 <- 'tmp/nih_data-20250218.csv'
+working_dir <- '~/Documents/Nature/Programming/nih_reporter'
+datafile <- file.path(working_dir, 'data/nih_data-20250219.csv')
+datafile2 <- file.path(working_dir, 'data/nih_data-20250218.csv')
 
 mydata <- read_csv(datafile) |> 
   janitor::clean_names()
@@ -22,6 +22,27 @@ length(dups)
 dups2 <- mydata2[which(duplicated(mydata2$project_number)),]$project_number
 length(dups2)
 # [1] 0
+
+# alt approach, from https://www.statology.org/dplyr-find-duplicates/
+mydata |> 
+  group_by_all() |> 
+  filter(n() > 1) |> 
+  ungroup() |> 
+  arrange(project_number)
+# A tibble: 240 × 4
+# award_date project_number    award_amount award_type
+# <date>     <chr>                    <dbl> <chr>     
+# 1 2025-01-10 1I01BX006638-01A1            0 1         
+# 2 2025-01-10 1I01BX006638-01A1            0 1         
+# 3 2025-01-10 1I01RX005006-01              0 1         
+# 4 2025-01-10 1I01RX005006-01              0 1         
+# 5 2025-01-10 1IK2HX003783-01A2            0 1         
+# 6 2025-01-10 1IK2HX003783-01A2            0 1         
+# 7 2025-01-19 1K24AR085177-01         212574 1         
+# 8 2025-01-19 1K24AR085177-01         212574 1         
+# 9 2025-01-10 1K99EY036889-01         123794 1         
+# 10 2025-01-10 1K99EY036889-01         123794 1         
+# ℹ 230 more rows
 
 # 120 duplicated records in mydata; view them
 mydata |> 
@@ -44,15 +65,15 @@ funding_per_wk <- fixed_data |>
   summarize(count = n(),
             total = sum(award_amount)) 
 
-write_csv(x = funding_per_wk, file = 'tmp/funding_per_wk-20250219.csv')
-write_csv(x = fixed_data, file = 'tmp/fixed_data-20250219.csv')
+today <- format(Sys.Date(), "%Y%m%d")
+write_csv(x = funding_per_wk, file = file.path(working_dir, glue::glue('outputs/funding_per_wk-{today}.csv')))
+write_csv(x = fixed_data, file = file.path(working_dir, glue::glue('outputs/fixed_data-{today}.csv')))
 
 # fixed_data for 1 Jan - 16 Feb should total $1.62 bn:
 fixed_data |> 
   filter(award_date >= '2025-01-01') |> 
   pluck('award_amount') |> 
   sum()
-
 # [1] 1620716873
 
 # make sure no data lost -- eg, if there are >500 records for a given day:
@@ -60,7 +81,6 @@ fixed_data |>
   group_by(award_date) |> 
   summarize(count = n()) |> 
   arrange(desc(count))
-
 # # A tibble: 412 × 2
 # award_date count
 # <date>     <int>
