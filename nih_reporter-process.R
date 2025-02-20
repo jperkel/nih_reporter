@@ -14,10 +14,24 @@ mydata2 <- read_csv(datafile2) |>
 missingdata <- mydata2 |> 
   filter(award_date %in% c('2025-01-11', '2025-01-20')) 
 
-# merge the datasets
+# check for duplicates
+dups <- mydata[which(duplicated(mydata$project_number)),]$project_number
+length(dups)
+# [1] 120
+
+dups2 <- mydata2[which(duplicated(mydata2$project_number)),]$project_number
+length(dups2)
+# [1] 0
+
+# 120 duplicated records in mydata; view them
+mydata |> 
+  filter(project_number %in% dups) |> 
+  View()  
+# sort by project number; if date & award amt are the same, they are duplicates
+
+# merge the datasets & remove duplicates
 fixed_data <- mydata |> 
   rbind(missingdata) |> 
-  # remove duplicates
   arrange(project_number) |> 
   distinct()
 
