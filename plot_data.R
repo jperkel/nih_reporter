@@ -50,6 +50,7 @@ mydata <-  mydata |>
             total = sum(total, na.rm = TRUE)) |> 
   ungroup() 
 
+# total funding
 mydata |>  
    ggplot(aes(x = mygroup, y = total / 1000000, fill = award_class)) +
    geom_col(position = position_stack(), color = 'black') +
@@ -59,11 +60,11 @@ mydata |>
    theme(legend.position = "top") +
    xlab(NULL)
  
+# number of grants
  mydata |>  
    ggplot(aes(x = mygroup, y = count / 1000, fill = award_class)) +
    geom_col(position = position_stack(), color = 'black') +
    ylab("No. Grants (thousands)") +
-   scale_y_continuous(labels = label_comma()) +
    facet_wrap('year') +
    theme(legend.position = "top") +
    xlab(NULL)
