@@ -7,3 +7,4 @@ Files:
 - `nih_reporter-process.R`: Script to tabulate grants by week
 - `plot_data.R`: Script to reproduce published graphs
 - `data` (directory): downloaded and processed data files
+- `outputs` (directory): output files
