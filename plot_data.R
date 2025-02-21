@@ -3,7 +3,7 @@ library(tidyverse)
 working_dir <- '~/Documents/Nature/Programming/nih_reporter'
 # datafile <- file.path(working_dir, 'data/nih_data-20250219.csv')
 # use pre-processed data instead!
-datafile <- file.path(working_dir, 'data/funding_per_wk-20250219.csv')
+datafile <- file.path(working_dir, 'outputs/funding_per_wk-20250219.csv')
 
 mydata <- read_csv(datafile)
 
