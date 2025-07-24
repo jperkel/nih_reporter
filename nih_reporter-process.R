@@ -8,6 +8,9 @@ datafile <- file.path(working_dir, 'data/nih_data-20250723.csv')
 mydata <- read_csv(datafile) |> 
   janitor::clean_names()
 
+# remove duplicate entries
+mydata <- mydata |> distinct() 
+
 # no data collected for 11 or 20 Jan 2025, so pull them in from earlier run (datafile2)
 # mydata2 <- read_csv(datafile2) |> 
 #   janitor::clean_names()
@@ -60,8 +63,8 @@ mydata <- read_csv(datafile) |>
 # funding_per_wk <- fixed_data |> 
 funding_per_wk <- mydata |> 
   mutate(
-    week = lubridate::week(award_date),
-    year = lubridate::year(award_date)
+    week = as.integer(lubridate::week(award_date)),
+    year = as.integer(lubridate::year(award_date))
     ) |> 
   group_by(year, week, award_type) |> 
   summarize(count = n(),
